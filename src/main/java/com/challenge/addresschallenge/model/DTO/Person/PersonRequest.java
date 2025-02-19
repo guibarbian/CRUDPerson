@@ -12,8 +12,8 @@ import java.util.List;
 @Builder
 public class PersonRequest {
 
-    private String name;
-    private LocalDate dateOfBirth;
-    private String cpf;
-    private List<Long> addressesId;
+    String name;
+    LocalDate dateOfBirth;
+    String cpf;
+    List<Long> addressesId;
 }

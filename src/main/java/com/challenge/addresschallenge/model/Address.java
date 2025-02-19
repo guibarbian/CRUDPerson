@@ -8,57 +8,36 @@ import lombok.*;
 @Value
 @Entity
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(force = true)
 @Table(name="addresses")
 public class Address {
 
     @Id
-    @Column(name="id")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
 
     @Column(name="street")
-    private String street;
+    String street;
 
     @Column(name="number")
-    private String number;
+    String number;
 
     @Column(name="neighbourhood")
-    private String neighbourhood;
+    String neighbourhood;
 
     @Column(name="city")
-    private String city;
+    String city;
 
     @Column(name="state")
-    private String state;
+    String state;
 
-    @Column(name="zipCode")
-    private String zipCode;
+    @Column(name="zipcode")
+    String zipCode;
 
     @JsonIgnoreProperties("owner")
-    @JoinColumn(name = "person_addresses")
+    @JoinColumn(name = "person_address")
     @ManyToOne
-    private Person owner;
-
-    public Address(Long id, String street, String number, String neighbourhood, String city, String state, String zipCode, Person owner){
-
-        this.id = id;
-        this.street = street;
-        this.number = number;
-        this.neighbourhood = neighbourhood;
-        this.city = city;
-        this.state = state;
-        this.zipCode = zipCode;
-        this.owner = owner;
-    }
-
-    public Address(){
-        this.id = null;
-        this.street = null;
-        this.number = null;
-        this.neighbourhood = null;
-        this.city = null;
-        this.state = null;
-        this.zipCode = null;
-        this.owner = null;
-    }
+    Person owner;
 
 }

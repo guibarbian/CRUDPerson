@@ -9,11 +9,11 @@ import lombok.Value;
 @Builder
 public class AddressRequest {
 
-    private String street;
-    private String number;
-    private String neighbourhood;
-    private String city;
-    private String state;
-    private String zipCode;
-    private Long personId;
+    String street;
+    String number;
+    String neighbourhood;
+    String city;
+    String state;
+    String zipCode;
+    Long personId;
 }

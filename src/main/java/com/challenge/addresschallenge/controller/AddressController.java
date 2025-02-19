@@ -1,8 +1,6 @@
 package com.challenge.addresschallenge.controller;
 
 import com.challenge.addresschallenge.model.DTO.Address.AddressRequest;
-import com.challenge.addresschallenge.model.DTO.Address.AddressResponse;
-import com.challenge.addresschallenge.model.DTO.Person.PersonResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface AddressController {

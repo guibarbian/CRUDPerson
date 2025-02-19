@@ -4,7 +4,6 @@ import com.challenge.addresschallenge.controller.AddressController;
 import com.challenge.addresschallenge.model.DTO.Address.AddressRequest;
 import com.challenge.addresschallenge.service.impl.AddressServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class AddressControllerImpl implements AddressController {
 
     private final AddressServiceImpl addressService;
-
-    @Autowired
-    public AddressControllerImpl(AddressServiceImpl addressService){
-        this.addressService = addressService;
-    }
 
     @GetMapping
     @Override

@@ -9,11 +9,11 @@ import lombok.Value;
 @Value
 @Builder
 public class AddressResponse {
-    private String street;
-    private String number;
-    private String neighbourhood;
-    private String city;
-    private String state;
-    private String zipCode;
-    private Person owner;
+    String street;
+    String number;
+    String neighbourhood;
+    String city;
+    String state;
+    String zipCode;
+    Person owner;
 }

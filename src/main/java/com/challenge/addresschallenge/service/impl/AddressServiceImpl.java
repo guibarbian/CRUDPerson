@@ -93,10 +93,6 @@ public class AddressServiceImpl implements AddressService {
     }
 
     public Person getOwnerById(Long ownerId){
-        if(personServiceImpl.getPersonById(ownerId).isEmpty()){
-            return null;
-        }
-
         return personServiceImpl.getPersonById(ownerId).get();
     }
 
