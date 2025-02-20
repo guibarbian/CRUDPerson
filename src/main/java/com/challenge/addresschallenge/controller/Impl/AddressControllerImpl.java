@@ -18,12 +18,12 @@ public class AddressControllerImpl implements AddressController {
     @GetMapping
     @Override
     public ResponseEntity<Object> getAll(){
-        return ResponseEntity.ok().body(addressService.getAll());
+        return ResponseEntity.ok().body(addressService.getAddresses());
     }
 
     @PostMapping
     @Override
-    public ResponseEntity<Object> createNewAddress(AddressRequest addressDto){
+    public ResponseEntity<Object> createNewAddress(@RequestBody AddressRequest addressDto){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(addressService.createNewAddress(addressDto));
     }

@@ -1,11 +1,9 @@
 package com.challenge.addresschallenge.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Data
-@Value
 @Entity
 @Builder
 @AllArgsConstructor
@@ -15,29 +13,23 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
 
     @Column(name="street")
-    String street;
+    private String street;
 
     @Column(name="number")
-    String number;
+    private String number;
 
     @Column(name="neighbourhood")
-    String neighbourhood;
+    private String neighbourhood;
 
     @Column(name="city")
-    String city;
+    private String city;
 
     @Column(name="state")
-    String state;
+    private String state;
 
     @Column(name="zipcode")
-    String zipCode;
-
-    @JsonIgnoreProperties("owner")
-    @JoinColumn(name = "person_address")
-    @ManyToOne
-    Person owner;
-
+    private String zipCode;
 }

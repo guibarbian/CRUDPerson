@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AddressService {
 
-    public List<Address> getAll();
+    public List<Address> getAddresses();
 
     public AddressResponse createNewAddress(AddressRequest addressDto);
 

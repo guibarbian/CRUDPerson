@@ -13,14 +13,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
 
     private final PersonRepository personRepository;
-    // private final AddressServiceImpl addressService;
+    private final AddressServiceImpl addressService;
 
     @Override
     public List<Person> getPeople(){
@@ -28,24 +27,24 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public PersonResponse createNewPerson(PersonRequest newPerson){
-        validateCreatePersonDto(newPerson);
+    public PersonResponse createNewPerson(PersonRequest personDto){
+        validateCreatePersonDto(personDto);
 
         personRepository.save(
-                Person.builder()
-                        .name(newPerson.getName())
-                        .dateOfBirth(newPerson.getDateOfBirth())
-                        .cpf(newPerson.getCpf())
-                        .addresses(List.of())
-                        .build()
+            Person.builder()
+                    .name(personDto.getName())
+                    .dateOfBirth(personDto.getDateOfBirth())
+                    .cpf(personDto.getCpf())
+                    .addresses(addressService.getAddressesById(personDto.getAddressesId()))
+                    .build()
         );
 
         return PersonResponse.builder()
-                .name(newPerson.getName())
-                .dateOfBirth(newPerson.getDateOfBirth())
-                .cpf(newPerson.getCpf())
-                .addresses(List.of())
-                .build();
+                                .name(personDto.getName())
+                                .dateOfBirth(personDto.getDateOfBirth())
+                                .cpf(personDto.getCpf())
+                                .addresses(addressService.getAddressesById(personDto.getAddressesId()))
+                                .build();
 
     }
 
@@ -55,17 +54,18 @@ public class PersonServiceImpl implements PersonService {
         
         personRepository.save(
                 Person.builder()
+                        .id(personId)
                         .name(personDto.getName())
                         .dateOfBirth(personDto.getDateOfBirth())
                         .cpf(personDto.getCpf())
-                        .addresses(List.of())
+                        .addresses(addressService.getAddressesById(personDto.getAddressesId()))
                         .build());
 
         return PersonResponse.builder()
                 .name(personDto.getName())
                 .dateOfBirth(personDto.getDateOfBirth())
                 .cpf(personDto.getCpf())
-                .addresses(List.of())
+                .addresses(addressService.getAddressesById(personDto.getAddressesId()))
                 .build();
     }
 
@@ -95,21 +95,34 @@ public class PersonServiceImpl implements PersonService {
         if(personRepository.findByCpf(personDTO.getCpf()).isPresent()){
             throw new BadRequestException("CPF already in use.");
         }
+
+        personDTO.getAddressesId().forEach(id -> {
+            personRepository.findAll().forEach(person -> {
+                if(person.getAddresses().contains(addressService.getAddressById(id))){
+                    throw new BadRequestException("Address of id " + id + " alredy belongs to someone");
+                }
+            });
+        });
+
     }
 
     public void validateUpdatePersonDto(Long personId, PersonRequest personDTO){
         if(personRepository.findById(personId).isEmpty()){
-            throw new NotFoundException("Person not found");
+            throw new NotFoundException("Person was not found");
         }
 
-        if(personRepository.findByCpf(personDTO.getCpf()).isPresent()){
-            throw new BadRequestException("CPF already in use.");
+        String personCpf = personRepository.findById(personId).get().getCpf();
+
+        if(!personDTO.getCpf().equals(personCpf) && personRepository.findByCpf(personDTO.getCpf()).isPresent()){
+            throw new BadRequestException("CPF " + personDTO.getCpf() + " is already in use.");
         }
+        
+
     }
 
     public void validateDeletePerson(Long personId){
         if(personRepository.findById(personId).isEmpty()){
-            throw new NotFoundException("Person not found.");
+            throw new NotFoundException("Person was not found.");
         }
     }
 
@@ -123,12 +136,12 @@ public class PersonServiceImpl implements PersonService {
         return Period.between(personBirth, today).getYears();
     }
 
-    public Optional<Person> getPersonById(Long personId){
+    public Person getPersonById(Long personId){
 
         if(personRepository.findById(personId).isEmpty()) {
             throw new NotFoundException("Person not found.");
         }
 
-        return personRepository.findById(personId);
+        return personRepository.findById(personId).get();
     }
 }

@@ -1,6 +1,5 @@
 package com.challenge.addresschallenge.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,19 +18,18 @@ public class Person {
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    Long id;
 
     @Column(name="name", nullable = false)
-    private String name;
+    String name;
 
     @Column(name="dateOfBirth")
-    private LocalDate dateOfBirth;
+    LocalDate dateOfBirth;
 
     @Column(name="cpf", unique = true, nullable = false)
-    private String cpf;
+    String cpf;
 
-    @OneToMany(mappedBy = "owner")
-    @JsonIgnoreProperties("addresses")
-    private List<Address> addresses;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Address> addresses;
 
 }
