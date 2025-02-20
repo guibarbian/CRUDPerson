@@ -14,4 +14,5 @@ public class PersonRequest {
     private LocalDate dateOfBirth;
     private String cpf;
     private List<Long> addressesId;
+    private Long favoriteAddressId;
 }

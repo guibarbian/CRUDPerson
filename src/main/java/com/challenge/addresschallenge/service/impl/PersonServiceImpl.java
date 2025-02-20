@@ -36,6 +36,7 @@ public class PersonServiceImpl implements PersonService {
                     .dateOfBirth(personDto.getDateOfBirth())
                     .cpf(personDto.getCpf())
                     .addresses(addressService.getAddressesById(personDto.getAddressesId()))
+                    .favoriteAdress(null)
                     .build()
         );
 
@@ -44,6 +45,7 @@ public class PersonServiceImpl implements PersonService {
                                 .dateOfBirth(personDto.getDateOfBirth())
                                 .cpf(personDto.getCpf())
                                 .addresses(addressService.getAddressesById(personDto.getAddressesId()))
+                                .favoriteAddress(null)
                                 .build();
 
     }
@@ -51,6 +53,10 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public PersonResponse updatePerson(Long personId, PersonRequest personDto){
         validateUpdatePersonDto(personId, personDto);
+
+        if(!personDto.getAddressesId().contains(personDto.getFavoriteAddressId()) && personDto.getFavoriteAddressId() != null){
+            throw new BadRequestException("This address is not in person's list");
+        }
         
         personRepository.save(
                 Person.builder()
@@ -59,6 +65,7 @@ public class PersonServiceImpl implements PersonService {
                         .dateOfBirth(personDto.getDateOfBirth())
                         .cpf(personDto.getCpf())
                         .addresses(addressService.getAddressesById(personDto.getAddressesId()))
+                        .favoriteAdress(personDto.getFavoriteAddressId() == null ? null : addressService.getAddressById(personDto.getFavoriteAddressId()))
                         .build());
 
         return PersonResponse.builder()
@@ -66,6 +73,7 @@ public class PersonServiceImpl implements PersonService {
                 .dateOfBirth(personDto.getDateOfBirth())
                 .cpf(personDto.getCpf())
                 .addresses(addressService.getAddressesById(personDto.getAddressesId()))
+                .favoriteAddress(personDto.getFavoriteAddressId() == null ? null : addressService.getAddressById(personDto.getFavoriteAddressId()))
                 .build();
     }
 
@@ -130,6 +138,10 @@ public class PersonServiceImpl implements PersonService {
         if(personRepository.findById(personId).isEmpty()){
             throw new NotFoundException("Person not found.");
         }
+
+        if(personRepository.findById(personId).get().getDateOfBirth() == null){
+            throw new BadRequestException("This person do not have a date of birth");
+        }
         LocalDate personBirth = personRepository.findById(personId).get().getDateOfBirth();
         LocalDate today = LocalDate.now();
 
@@ -143,5 +155,13 @@ public class PersonServiceImpl implements PersonService {
         }
 
         return personRepository.findById(personId).get();
+    }
+
+    public void validateFavoriteAddress(Long personId, Long addressId){
+
+        if(!personRepository.findById(personId).get().getAddresses().contains(addressService.getAddressById(addressId))){
+            throw new BadRequestException("The address must be in person's list.");
+        }
+
     }
 }

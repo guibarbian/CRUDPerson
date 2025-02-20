@@ -15,4 +15,5 @@ public class PersonResponse {
     private LocalDate dateOfBirth;
     private String cpf;
     private List<Address> addresses;
+    private Address favoriteAddress;
 }

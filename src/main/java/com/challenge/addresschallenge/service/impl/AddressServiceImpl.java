@@ -77,7 +77,6 @@ public class AddressServiceImpl implements AddressService {
 
     public void deleteAddress(Long addressId){
         validateUpdateAddress(addressId);
-        deleteAddress(addressId);
 
         addressRepository.deleteById(addressId);
     }

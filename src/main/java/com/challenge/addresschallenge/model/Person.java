@@ -29,7 +29,10 @@ public class Person {
     @Column(name="cpf", unique = true, nullable = false)
     String cpf;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL ,orphanRemoval = true)
     List<Address> addresses;
+
+    @OneToOne
+    Address favoriteAdress;
 
 }
