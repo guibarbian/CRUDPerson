@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.challenge.addresschallenge.model.Address;
 import com.challenge.addresschallenge.model.Person;
 import com.challenge.addresschallenge.model.DTO.Person.PersonRequest;
+import com.challenge.addresschallenge.model.DTO.Person.PersonResponse;
 import com.challenge.addresschallenge.repository.AddressRepository;
 import com.challenge.addresschallenge.repository.PersonRepository;
 import com.challenge.addresschallenge.service.impl.AddressServiceImpl;
@@ -140,23 +141,94 @@ public class PersonServiceTest {
     }
 
     @Test
-    void shallThrowBadRequestWhenTriesToCreateAPersonWithAnAlreadyUsedAddress(){
-
-        Address address = Address.builder().id((long)1).build();
-
-        Person person1 = Person.builder().id((long)1).addresses(List.of(address)).build();
-
+    void shallCreateNewPerson(){
         PersonRequest dto = PersonRequest.builder().name("Peter").cpf("123").addressesId(List.of((long)1)).build();
 
-        when(personRepository.findAll()).thenReturn(List.of(person1));
-        when(addressRepository.findById((long)1)).thenReturn(Optional.of(address));
+        PersonResponse response = personService.createNewPerson(dto);
+
+        assertEquals("Peter", response.getName());
+        assertEquals("123", response.getCpf());
+    }
+
+    @Test
+    void shallThrowNotFoundExceptionWhenUpdatesAPerson(){
+
+        PersonRequest dto = PersonRequest.builder().build();
+        
+        when(personRepository.findById((long)1)).thenReturn(Optional.empty());
 
         try{
-            personService.createNewPerson(dto);
+            personService.updatePerson((long)1, dto);
             fail("Exception not thrown");
         } catch(Exception error){
-            assertEquals("Address of id 1 alredy belongs to someone", error.getMessage());
+            assertEquals("Person was not found", error.getMessage());
         }
+    }
+
+    @Test
+    void shallThrowBadRequestWhenUpdatesAPerson(){
+        Person person1 = Person.builder().id((long)1).cpf("123").build();
+        // Person person2 = Person.builder().id((long)2).cpf("222").build();
+
+        PersonRequest dto = PersonRequest.builder().cpf("222").build();
+
+        when(personRepository.findById((long)1)).thenReturn(Optional.of(person1));
+        when(personRepository.findByCpf(dto.getCpf())).thenReturn(Optional.of(person1));
+
+        try{
+            personService.updatePerson((long)1, dto);
+            fail("Exception not thrown");
+        } catch(Exception error){
+            assertEquals("CPF 222 is already in use.", error.getMessage());
+        }
+    }
+
+    @Test
+    void shallThrowBadRequestWhenFavAddressIsNotInPersonsList(){
+        // Address address = Address.builder().id((long)1).number("222").build();
+
+        Person person = Person.builder().id((long)1).name("Peter").cpf("123").addresses(List.of()).build();
+
+        PersonRequest dto = PersonRequest.builder().cpf("123").addressesId(List.of()).favoriteAddressId((long)1).build();
+
+        when(personRepository.findById((long)1)).thenReturn(Optional.of(person));
+
+        try{
+            personService.updatePerson((long)1, dto);
+            fail("Exception not thrown");
+        } catch(Exception error){
+            assertEquals("This address is not in person's list", error.getMessage());
+        }
+    }
+
+    @Test
+    void shallUpdatePerson(){
+        Address address = Address.builder().id((long)1).number("222").build();
+
+        Person person = Person.builder().id((long)1).name("Peter")
+                            .cpf("123").addresses(List.of(address)).build();
+
+        PersonRequest dto = PersonRequest.builder().name("John").cpf("222")
+                            .addressesId(List.of((long)1)).favoriteAddressId((long)1).build();
+
+        when(personRepository.findById((long)1)).thenReturn(Optional.of(person));
+
+        PersonResponse response = personService.updatePerson((long)1, dto);
+
+        assertEquals("John", response.getName());
+    }
+
+    @Test
+    void shallDeletePerson(){
+        Address address = Address.builder().id((long)1).build();
+
+        Person person = Person.builder().id((long)1).name("John").cpf("123").addresses(List.of(address)).build();
+
+        when(personRepository.findById((long)1)).thenReturn(Optional.of(person));
+
+        personService.deletePerson((long)1);
+        verify(personRepository).findById((long)1);
+        verify(personRepository).deleteById((long)1);
     }
 
 
