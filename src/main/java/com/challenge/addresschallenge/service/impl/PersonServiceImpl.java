@@ -84,24 +84,22 @@ public class PersonServiceImpl implements PersonService {
     }
 
     public Integer getPersonAge(Long personId){
-        validateDeletePerson(personId);
-
         return calculateBirthday(personId);
     }
 
     // FUNCTIONS
 
     public void validateCreatePersonDto(PersonRequest personDTO){
-        if(personDTO.getName().isEmpty()){
+        if(personDTO.getName() == null){
             throw new BadRequestException("Name must be filled.");
         }
 
-        if(personDTO.getCpf().isEmpty()){
+        if(personDTO.getCpf() == null){
             throw new BadRequestException("CPF must be filled.");
         }
 
         if(personRepository.findByCpf(personDTO.getCpf()).isPresent()){
-            throw new BadRequestException("CPF already in use.");
+            throw new BadRequestException("CPF is already in use.");
         }
 
         personDTO.getAddressesId().forEach(id -> {
