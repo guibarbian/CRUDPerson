@@ -19,7 +19,7 @@ public class AddressControllerImpl implements AddressController {
     @GetMapping
     @Override
     public ResponseEntity<Object> getAll(){
-        return ResponseEntity.ok().body(addressService.getAddresses());
+        return ResponseEntity.status(HttpStatus.OK).body(addressService.getAddresses());
     }
 
     @PostMapping
